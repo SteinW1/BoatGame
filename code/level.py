@@ -84,7 +84,7 @@ class Level:
             self.switch_state(game_states['town'])
 
         if self.player.debug_mode == True:
-            debug(f'XY: {round(self.player.position[0])}/{round(self.player.position[1])} FPS:{round(self.game_clock.get_fps())}')
+            debug(f'XY: {round(self.player.rect.x)}/{round(self.player.rect.y)} FPS:{round(self.game_clock.get_fps())}')
             
     def draw(self):
         self.visible_sprites.custom_draw(self.player, self.background)

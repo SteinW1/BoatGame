@@ -4,73 +4,46 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self, sprite_group):
         super().__init__(sprite_group)
         
-        # setup default values
         self.direction = pygame.math.Vector2()
         self.rect = pygame.Rect(0,0,0,0)
+        self.position = self.rect.x, self.rect.y
         self.animation_frame_index = 0
         self.animation_speed = 0.1 # lower is slower
 
-        # default hitbox setup
         self.hitbox_xoffset = 0
         self.hitbox_yoffset = 0
         self.hitbox_width = 0
         self.hitbox_height = 0
         self.hitbox_position = (self.rect.x + self.hitbox_xoffset, self.rect.y + self.hitbox_yoffset)
         self.hitbox = pygame.Rect(self.hitbox_position,(self.hitbox_width, self.hitbox_height))
-        
-    def collision(self, movement_direction):
-        
-        # test for horizontal collisions, reset the hitbox if there is a collision
-        if movement_direction == 'horizontal':
-            for sprite in self.collidable_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    
-                    if self.direction.x > 0:                    # if moving right
-                        self.hitbox.right = sprite.hitbox.left
-                    elif self.direction.x < 0:                  # if moving left
-                        self.hitbox.left = sprite.hitbox.right
-                    
-                    return True
-                    
-        # test for vertical collisions, reset the hitbox if there is a collision
-        if movement_direction == 'vertical':
-            for sprite in self.collidable_sprites:
-                if sprite.hitbox.colliderect(self.hitbox):
-                    
-                    if self.direction.y > 0:                    # if moving down
-                        self.hitbox.bottom = sprite.hitbox.top
-                    elif self.direction.y < 0:                  # if moving up
-                        self.hitbox.top = sprite.hitbox.bottom
-                    
-                    return True
     
-    def move(self, entity_speed):
+    def detect_collision(self, rect_new_x, rect_new_y):
+
+        for sprite in self.collidable_sprites:
+            if sprite.hitbox.colliderect(rect_new_x):
+                self.x_change = 0
+            if sprite.hitbox.colliderect(rect_new_y):
+                self.y_change = 0
+
+    def update_hitbox(self, rect):
+        hitbox_position = (rect.x + self.hitbox_xoffset, rect.y + self.hitbox_yoffset)
+        hitbox = pygame.Rect(hitbox_position,(self.hitbox_width, self.hitbox_height))
+        return hitbox
         
-        # check if the player is moving and normalize their movement vector
+    def move(self, entity_speed):
+
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
+            
+        self.x_change = self.direction.x * entity_speed
+        self.y_change = self.direction.y * entity_speed
+        
+        rect_with_new_x = pygame.Rect((self.rect.x + self.x_change, self.rect.y),(self.rect.width, self.rect.height))
+        new_x_hitbox = self.update_hitbox(rect_with_new_x)
+        rect_with_new_y = pygame.Rect((self.rect.x, self.rect.y + self.y_change),(self.rect.width, self.rect.height))
+        new_y_hitbox = self.update_hitbox(rect_with_new_y)
+        
+        self.detect_collision(new_x_hitbox, new_y_hitbox)        
 
-        # reset entity hitbox before testing for collisions
-        self.hitbox.x, self.hitbox.y = self.rect.x + self.hitbox_xoffset, self.rect.y + self.hitbox_yoffset
-        
-        # calculation change in position
-        x, y = self.position
-        x_change = self.direction.x * entity_speed
-        y_change = self.direction.y * entity_speed
-        
-        # check for horizontal collisions
-        self.hitbox_test_position = self.hitbox.x + x_change, self.hitbox.y
-        self.hitbox.topleft = self.hitbox_test_position
-        if self.collision('horizontal'): # if horizontal collision
-            x_change = 0
-        
-        # check for vertical collisions
-        self.hitbox_test_position = self.hitbox.x, self.hitbox.y + y_change
-        self.hitbox.topleft = self.hitbox_test_position
-        if self.collision('vertical'):                                          # test for a vertical collision using the updated hitbox
-            y_change = 0                                                        # if vertical collision do not change entity y position
-        
-        # update entity position
-        self.position = x + x_change, y + y_change
-        self.rect.x = self.position[0]
-        self.rect.y = self.position[1]
+        self.position = self.position[0] + self.x_change, self.position[1] + self.y_change
+        self.rect.x, self.rect.y = self.position[0], self.position[1] 

@@ -95,5 +95,5 @@ class Player(Entity):
     
     def update(self) -> None:
         self.input()
-        self.animate()
         self.move(self.speed)
+        self.animate()
