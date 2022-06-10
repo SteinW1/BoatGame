@@ -18,7 +18,6 @@ class Entity(pygame.sprite.Sprite):
         self.hitbox = pygame.Rect(self.hitbox_position,(self.hitbox_width, self.hitbox_height))
     
     def detect_collision(self, rect_new_x, rect_new_y):
-
         for sprite in self.collidable_sprites:
             if sprite.hitbox.colliderect(rect_new_x):
                 self.x_change = 0
@@ -37,13 +36,13 @@ class Entity(pygame.sprite.Sprite):
             
         self.x_change = self.direction.x * entity_speed
         self.y_change = self.direction.y * entity_speed
-        
-        rect_with_new_x = pygame.Rect((self.rect.x + self.x_change, self.rect.y),(self.rect.width, self.rect.height))
+
+        test_rect_new_x = pygame.Rect((self.position[0] + self.x_change, self.position[1]),(self.rect.width, self.rect.height))
         new_x_hitbox = self.update_hitbox(rect_with_new_x)
-        rect_with_new_y = pygame.Rect((self.rect.x, self.rect.y + self.y_change),(self.rect.width, self.rect.height))
+        test_rect_new_y = pygame.Rect((self.position[0], self.position[1] + self.y_change),(self.rect.width, self.rect.height))
         new_y_hitbox = self.update_hitbox(rect_with_new_y)
         
         self.detect_collision(new_x_hitbox, new_y_hitbox)        
 
         self.position = self.position[0] + self.x_change, self.position[1] + self.y_change
-        self.rect.x, self.rect.y = self.position[0], self.position[1] 
+        self.rect.x, self.rect.y = self.position[0], self.position[1]
