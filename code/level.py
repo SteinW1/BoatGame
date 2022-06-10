@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-from support import *
+from support import import_csv_layout, import_folder
 from debug import debug
 from camera import PlayerBoxCamera
 from player import Player
@@ -9,16 +9,14 @@ from dock import Dock
 
 class Level:
     def __init__(self, clock) -> None:
+        
         self.game_clock = clock
         self.active = True
-        
-        # get display surface
         self.display_surface = pygame.display.get_surface()
 
         # set map size
         self.level_width = MAP_TILE_WIDTH * TILESIZE
         self.level_height = MAP_TILE_HEIGHT * TILESIZE
-        print(self.level_width)
         
         # setup sprites
         self.visible_sprites = CameraGroup(self)
@@ -31,36 +29,30 @@ class Level:
         """
         Creates the current level map. Reads the tile maps and initializes necessary game objects.
         """
-        # import map layout files
+        # import layout files for the map
         tilemaps= {
             'map_boundary': import_csv_layout('../map/pippen_test_map_Boundary.csv'),
             'map_docks': import_csv_layout('../map/pippen_test_map_Docks.csv')
         }
-        
-        # import graphic files
         
         # create map floor
         self.background_surface = pygame.image.load('../graphics/tilemap/pippen_test_map.png').convert_alpha()
         self.background_rect = self.background_surface.get_rect(topleft = (0,0))
         self.background = (self.background_surface, self.background_rect)
         
-        # initializations
         self.player = Player((30,30), [self.visible_sprites], self.collidable_sprites) 
         self.docks = []
         
-        # draw the map
         for map_set, map_set_data in tilemaps.items():
             for row_index, row in enumerate(map_set_data):
                 for column_index, column in enumerate(row):
                     if column != '-1': 
                         x = column_index * TILESIZE
                         y = row_index * TILESIZE
-                        
-                        # draw boundary collision objects                   
+                                        
                         if map_set == 'map_boundary':
                             TileObject((x,y), [self.collidable_sprites], 'boundary')
 
-                        # create town dock objects
                         if map_set == 'map_docks':
                             self.docks.append(Dock(len(self.docks)+1, (x,y)))
                             print('Place Object Created')
@@ -84,20 +76,16 @@ class Level:
             else:
                 self.docks[self.player.current_port - 1].player_proximity_check(self.player)
         
-        # update sprites
         self.visible_sprites.update()
         
-        # draw the game
         self.draw()
-        
-        # change states if needed
+
         if self.player.request_to_dock:            
             self.switch_state(game_states['town'])
+
+        if self.player.debug_mode == True:
+            debug(f'XY: {round(self.player.position[0])}/{round(self.player.position[1])} FPS:{round(self.game_clock.get_fps())}')
             
-        # debug
-        fps = self.game_clock.get_fps()
-        debug(f'XY: {round(self.player.position[0])}/{round(self.player.position[1])} FPS:{round(fps)}')
-        
     def draw(self):
         self.visible_sprites.custom_draw(self.player, self.background)
         
@@ -118,6 +106,5 @@ class CameraGroup(pygame.sprite.Group):
             player:
             
             background:
-            
         """
         self.camera.draw(self, player, background)

@@ -9,13 +9,16 @@ class Player(Entity):
         self.collidable_sprites = collidable_sprites
 
         # player stats
-        self.speed = 1    
+        self.speed = 2    
         self.boat = 'schooner'
-        self.direction_status = 'right'
+        self.animation = 'right'
+        self.request_to_dock = False
+        self.can_dock = False
+        self.current_port = None
         
         # graphics setup
         self.import_assets()
-        self.image = pygame.image.load(f'../graphics/player/{self.boat}/{self.direction_status}/{self.direction_status}_{self.frame_index}.png').convert_alpha()
+        self.image = pygame.image.load(f'../graphics/player/{self.boat}/{self.animation}/{self.animation}_{self.animation_frame_index}.png').convert_alpha()
         self.rect = self.image.get_rect(topleft = position)
         
         # player hitbox setup
@@ -25,15 +28,6 @@ class Player(Entity):
         self.hitbox_height = 9
         self.hitbox_position = (self.rect.x + self.hitbox_xoffset, self.rect.y + self.hitbox_yoffset)
         self.hitbox = pygame.Rect(self.hitbox_position,(self.hitbox_width, self.hitbox_height))
-        
-        # player stats
-        self.speed = 2    
-        self.boat = 'schooner'
-        
-        # player ship docking
-        self.request_to_dock = False
-        self.can_dock = False
-        self.current_port = None
         
         # debug mode
         self.debug_mode = False
@@ -57,7 +51,6 @@ class Player(Entity):
         
         keys = pygame.key.get_pressed()
         
-        # movement input
         if keys[pygame.K_UP ] or keys[pygame.K_w]:
             self.direction.y = -1
         elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
@@ -67,14 +60,13 @@ class Player(Entity):
             
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.direction.x =-1
-            self.direction_status = 'left'
+            self.animation = 'left'
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.direction.x = 1
-            self.direction_status = 'right'
+            self.animation = 'right'
         else:
             self.direction.x = 0
 
-        # ship docking
         if keys[pygame.K_SPACE] and self.can_dock:
             self.request_to_dock = True
         else:
@@ -93,15 +85,13 @@ class Player(Entity):
     
     def animate(self) -> None:
         
-        animation = self.animations[self.direction_status]
-        
-        #loop over frame index
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(animation):
-            self.frame_index = 0
+        animation = self.animations[self.animation]
 
-        # set the image
-        self.image = animation[int(self.frame_index)]
+        self.animation_frame_index += self.animation_speed
+        if self.animation_frame_index >= len(animation):
+            self.animation_frame_index = 0
+            
+        self.image = animation[int(self.animation_frame_index)]
     
     def update(self) -> None:
         self.input()

@@ -3,20 +3,20 @@ from os import walk
 import pygame
 
 def import_csv_layout(path):
-    terrain = []
-    with open(path) as level_map:
-        layout = reader(level_map, delimiter = ',') # delimiter is what seperates each entry in the file
+    csv_as_list = []
+    with open(path) as csv:
+        csv_layout = reader(csv, delimiter = ',')
         
-        for row in layout:
-            terrain.append(list(row))
-        return terrain
+        for row in csv_layout:
+            csv_as_list.append(list(row))
+        return csv_as_list
 
 def import_folder(path):
     surface_list = []
     
     for _,__,image_files in walk(path):
-        for i in image_files:
-            full_path = path + '/' + i
+        for file in image_files:
+            full_path = path + '/' + file
             image_surface = pygame.image.load(full_path).convert_alpha()
             surface_list.append(image_surface)
             

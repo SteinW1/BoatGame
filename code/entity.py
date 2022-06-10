@@ -7,7 +7,7 @@ class Entity(pygame.sprite.Sprite):
         # setup default values
         self.direction = pygame.math.Vector2()
         self.rect = pygame.Rect(0,0,0,0)
-        self.frame_index = 0
+        self.animation_frame_index = 0
         self.animation_speed = 0.1 # lower is slower
 
         # default hitbox setup
@@ -18,10 +18,10 @@ class Entity(pygame.sprite.Sprite):
         self.hitbox_position = (self.rect.x + self.hitbox_xoffset, self.rect.y + self.hitbox_yoffset)
         self.hitbox = pygame.Rect(self.hitbox_position,(self.hitbox_width, self.hitbox_height))
         
-    def collision(self, direction):
+    def collision(self, movement_direction):
         
         # test for horizontal collisions, reset the hitbox if there is a collision
-        if direction == 'horizontal':
+        if movement_direction == 'horizontal':
             for sprite in self.collidable_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
                     
@@ -33,7 +33,7 @@ class Entity(pygame.sprite.Sprite):
                     return True
                     
         # test for vertical collisions, reset the hitbox if there is a collision
-        if direction == 'vertical':
+        if movement_direction == 'vertical':
             for sprite in self.collidable_sprites:
                 if sprite.hitbox.colliderect(self.hitbox):
                     
@@ -43,8 +43,8 @@ class Entity(pygame.sprite.Sprite):
                         self.hitbox.top = sprite.hitbox.bottom
                     
                     return True
-                    
-    def move(self, speed):
+    
+    def move(self, entity_speed):
         
         # check if the player is moving and normalize their movement vector
         if self.direction.magnitude() != 0:
@@ -55,8 +55,8 @@ class Entity(pygame.sprite.Sprite):
         
         # calculation change in position
         x, y = self.position
-        x_change = self.direction.x * speed
-        y_change = self.direction.y * speed
+        x_change = self.direction.x * entity_speed
+        y_change = self.direction.y * entity_speed
         
         # check for horizontal collisions
         self.hitbox_test_position = self.hitbox.x + x_change, self.hitbox.y
