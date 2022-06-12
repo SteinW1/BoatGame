@@ -1,4 +1,5 @@
 import pygame
+from autopilot import Autopilot
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, sprite_group):
@@ -28,21 +29,25 @@ class Entity(pygame.sprite.Sprite):
         hitbox_position = (rect.x + self.hitbox_xoffset, rect.y + self.hitbox_yoffset)
         hitbox = pygame.Rect(hitbox_position,(self.hitbox_width, self.hitbox_height))
         return hitbox
-        
+
     def move(self, entity_speed):
 
         if self.direction.magnitude() != 0:
             self.direction = self.direction.normalize()
             
-        self.x_change = self.direction.x * entity_speed
-        self.y_change = self.direction.y * entity_speed
-
-        test_rect_new_x = pygame.Rect((self.position[0] + self.x_change, self.position[1]),(self.rect.width, self.rect.height))
-        new_x_hitbox = self.update_hitbox(rect_with_new_x)
-        test_rect_new_y = pygame.Rect((self.position[0], self.position[1] + self.y_change),(self.rect.width, self.rect.height))
-        new_y_hitbox = self.update_hitbox(rect_with_new_y)
-        
-        self.detect_collision(new_x_hitbox, new_y_hitbox)        
-
-        self.position = self.position[0] + self.x_change, self.position[1] + self.y_change
-        self.rect.x, self.rect.y = self.position[0], self.position[1]
+        if not self.autopilot_on:
+            self.x_change = self.direction.x * entity_speed
+            self.y_change = self.direction.y * entity_speed
+    
+            test_rect_new_x = pygame.Rect((self.position[0] + self.x_change, self.position[1]),(self.rect.width, self.rect.height))
+            new_x_hitbox = self.update_hitbox(test_rect_new_x)
+            test_rect_new_y = pygame.Rect((self.position[0], self.position[1] + self.y_change),(self.rect.width, self.rect.height))
+            new_y_hitbox = self.update_hitbox(test_rect_new_y)
+    
+            self.detect_collision(new_x_hitbox, new_y_hitbox)        
+    
+            self.position = self.position[0] + self.x_change, self.position[1] + self.y_change
+            self.rect.x, self.rect.y = self.position[0], self.position[1]
+            self.hitbox = self.update_hitbox(self.rect)
+        else:
+            pass

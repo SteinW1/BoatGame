@@ -1,10 +1,12 @@
 import pygame
 from support import import_folder
 from entity import Entity
+from autopilot import Autopilot
 
 class Player(Entity):
     def __init__(self, position, sprite_group, collidable_sprites) -> None:
         super().__init__(sprite_group)
+        self.name = 'Player'
         self.position = position
         self.collidable_sprites = collidable_sprites
 
@@ -28,7 +30,10 @@ class Player(Entity):
         self.hitbox_height = 9
         self.hitbox_position = (self.rect.x + self.hitbox_xoffset, self.rect.y + self.hitbox_yoffset)
         self.hitbox = pygame.Rect(self.hitbox_position,(self.hitbox_width, self.hitbox_height))
-        
+
+        self.autopilot = Autopilot(self)
+        self.autopilot_on = False
+
         # debug mode
         self.debug_mode = False
         self.debug_switchable = True
@@ -84,7 +89,7 @@ class Player(Entity):
                 self.debug_switch_time = pygame.time.get_ticks()
     
     def animate(self) -> None:
-        
+
         animation = self.animations[self.animation]
 
         self.animation_frame_index += self.animation_speed

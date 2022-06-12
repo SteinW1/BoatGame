@@ -2,31 +2,23 @@ import pygame
 from settings import *
 
 class Button:
-    def __init__(self, x, y, w, h, msg=None, text_alignment='center'):
+    def __init__(self, x, y, w, h, message=None, text_alignment='center'):
         
         self.display_surface = pygame.display.get_surface()
-        
-        # setup button rect
         self.rect = x, y, w, h
-        
-        # setup button graphics
         self.active_color = (255, 255, 255)
         self.inactive_color = (255, 0, 0)
         
-        if msg:
-            # setup button text
+        if message:
             self.has_text = True
-            self.message = msg
+            self.message = message
             self.text_color = (0, 0, 0)
             self.text_alignment = text_alignment
             self.text_position = self.rect[0] + self.rect[2]/2, self.rect[1] + self.rect[3]/2
             
-            #
             self.font_object = pygame.font.SysFont(None, UI_FONT_SIZE)
             self.textBoxSurface = self.font_object.render(self.message, True, 'black')
             self.textBoxRect = self.textBoxSurface.get_rect()
-
-            # set the text position to match the requested text alignment
             
             if self.text_alignment.upper() == 'LEFT':
                 self.textBoxRect.topleft = self.text_position[0], self.text_position[1]

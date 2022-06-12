@@ -1,6 +1,12 @@
-from csv import reader
+from csv import reader, writer
 from os import walk
 import pygame
+
+path = '../map/path_nodes.csv'
+def create_csv_file(path, data):
+    with open(path, 'w', newline='') as file:
+        file_writer = writer(file)
+        file_writer.writerows(data)
 
 def import_csv_layout(path):
     csv_as_list = []

@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from support import import_csv_layout, import_folder
+from support import *
 from debug import debug
 from camera import PlayerBoxCamera
 from player import Player
@@ -40,7 +41,6 @@ class Level:
         self.background_rect = self.background_surface.get_rect(topleft = (0,0))
         self.background = (self.background_surface, self.background_rect)
         
-        self.player = Player((30,30), [self.visible_sprites], self.collidable_sprites) 
         self.docks = []
         
         for map_set, map_set_data in tilemaps.items():
@@ -55,11 +55,11 @@ class Level:
 
                         if map_set == 'map_docks':
                             self.docks.append(Dock(len(self.docks)+1, (x,y)))
-                            print('Place Object Created')
-
+                            
+        print('######################\n######################\n######################')
         # create the player
         self.player = Player((30,30), [self.visible_sprites], self.collidable_sprites)
-        
+
         print('Main World Map Created')
         
     def run(self, game_states) -> None: # called once per iteration of the game loop
