@@ -55,8 +55,7 @@ class Level:
 
                         if map_set == 'map_docks':
                             self.docks.append(Dock(len(self.docks)+1, (x,y)))
-                            
-        print('######################\n######################\n######################')
+
         # create the player
         self.player = Player((30,30), [self.visible_sprites], self.collidable_sprites)
 
@@ -84,7 +83,7 @@ class Level:
             self.switch_state(game_states['town'])
 
         if self.player.debug_mode == True:
-            debug(f'XY: {round(self.player.rect.x)}/{round(self.player.rect.y)} FPS:{round(self.game_clock.get_fps())}')
+            debug(f'XY: {round(self.player.hitbox.x)//TILESIZE}/{round(self.player.hitbox.y)//TILESIZE} FPS:{round(self.game_clock.get_fps())}')
             
     def draw(self):
         self.visible_sprites.custom_draw(self.player, self.background)
