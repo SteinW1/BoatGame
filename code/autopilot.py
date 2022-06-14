@@ -10,11 +10,9 @@ class Autopilot:
         self.map_matrix = self.create_matrix()
         self.pathing_matrix = self.update_pathing_matrix()
         
-        #####################################################
-        #TODO: master object needs to be able to change these
-        self.current_target = (301, 297)
+        #TODO: master object must be able to change current target & status
+        self.current_target = (0,0)
         self.autopilot_status = False
-        #####################################################
         
         self.current_path_points = self.calculate_path()
         self.current_path = self.convert_path_nodes_to_xylocation()
@@ -75,3 +73,20 @@ class Autopilot:
         for sprite in self.master_object.collidable_sprites:
             if sprite.hitbox.colliderect(test_rect):
                 return True
+        
+    def change_target(self, target):
+        self.current_target = target
+    
+    '''
+    def get_nearest_navigable_node(self):
+        
+        def create_list_of_nearby_nodes(radius):
+            x, y = self.current_target
+            nearby_nodes = []
+            for delta_x in range(-radius, radius):
+                for delta_y in range(-radius, radius):
+                    nearby_nodes.append(x + delta_x, y + delta_y)
+            print(neary_nodes)
+        pass
+    '''
+    

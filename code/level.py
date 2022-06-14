@@ -15,28 +15,24 @@ class Level:
         self.active = True
         self.display_surface = pygame.display.get_surface()
 
-        # set map size
         self.level_width = MAP_TILE_WIDTH * TILESIZE
         self.level_height = MAP_TILE_HEIGHT * TILESIZE
         
-        # setup sprites
         self.visible_sprites = CameraGroup(self)
         self.collidable_sprites = pygame.sprite.Group()
         
-        # setup map
         self.create_map()
         
     def create_map(self) -> None:
         """
         Creates the current level map. Reads the tile maps and initializes necessary game objects.
         """
-        # import layout files for the map
+
         tilemaps= {
             'map_boundary': import_csv_layout('../map/pippen_test_map_Boundary.csv'),
             'map_docks': import_csv_layout('../map/pippen_test_map_Docks.csv')
         }
         
-        # create map floor
         self.background_surface = pygame.image.load('../graphics/tilemap/pippen_test_map.png').convert_alpha()
         self.background_rect = self.background_surface.get_rect(topleft = (0,0))
         self.background = (self.background_surface, self.background_rect)
@@ -56,7 +52,6 @@ class Level:
                         if map_set == 'map_docks':
                             self.docks.append(Dock(len(self.docks)+1, (x,y)))
 
-        # create the player
         self.player = Player((30,30), [self.visible_sprites], self.collidable_sprites)
 
         print('Main World Map Created')
@@ -83,7 +78,7 @@ class Level:
             self.switch_state(game_states['town'])
 
         if self.player.debug_mode == True:
-            debug(f'XY: {round(self.player.hitbox.x)//TILESIZE}/{round(self.player.hitbox.y)//TILESIZE} FPS:{round(self.game_clock.get_fps())}')
+            debug(f'XY: {round(self.player.hitbox.x)//TILESIZE}/{round(self.player.hitbox.y)//TILESIZE} FPS:{round(self.game_clock.get_fps())} {self.player.autopilot.autopilot_status}')
             
     def draw(self):
         self.visible_sprites.custom_draw(self.player, self.background)

@@ -33,6 +33,8 @@ class Player(Entity):
 
         self.autopilot = Autopilot(self)
         self.autopilot_on = False
+        self.autopilot.current_target = self.position
+        self.autopilot.autopilot_status = False
 
         # debug mode
         self.debug_mode = False
